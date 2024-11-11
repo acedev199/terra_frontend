@@ -1,0 +1,239 @@
+import React, {useState} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { NotificationSignInError, NotificationSignOutSuccess } from "../widgets/auth";
+import { removeSignoutAlert } from "../redux/authSlice";
+
+export function SignIn() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [usernameEmail, setUsernameEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [authError, setAuthError] = useState(false);
+  
+  const signoutSuccess = useSelector((state) => state.auth.isSignoutAlert);
+  
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    // Check the credentials
+    if (usernameEmail !== 'correctUser' || password !== 'correctPassword') {
+      setAuthError(true); // Show error if credentials are incorrect
+    } else {
+      setAuthError(false); // Hide error if credentials are correct
+      navigate("/application") // Perform login or navigate to another page if needed
+      dispatch(removeSignoutAlert());
+    }
+  };
+  return (
+    <div className="w-full min-h-screen bg-zinc-950">
+      {authError && <NotificationSignInError setAuthError={setAuthError} /> }
+      {signoutSuccess && <NotificationSignOutSuccess />}
+      {/* <!-- Start of Login Container --> */}
+      <div
+        className="flex-col justify-center hidden min-h-full py-12 sm:flex sm:px-6 lg:px-8"
+      >
+        <div className="sm:mx-auto sm:w-full sm:max-w-md">
+          {/* <!-- Logo --> */}
+          <img
+            className="w-auto h-10 mx-auto"
+            src="/img/terra-symbol-white.png"
+            alt="Terra"
+          />
+          {/* <!-- Header --> */}
+          <h2 className="mt-6 text-2xl font-normal leading-9 text-center text-white">
+            Sign into Terra
+          </h2>
+        </div>
+
+        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[440px]">
+          <div className="px-6 py-12 shadow bg-zinc-900 sm:rounded-xl sm:px-12">
+            {/* <!-- Login Form --> */}
+            <form
+              id="login-form"
+              className="space-y-6"
+              onSubmit={handleSubmit}
+            >
+              {/* <!-- Email Address / Username --> */}
+              <div className="gap-y-2">
+                {/* <!-- Label --> */}
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-normal leading-6 text-gray-300"
+                >Email or username
+                </label>
+                <div className="mt-2">
+                  {/* <!-- Input Field --> */}
+                  <input
+                    id="login-username-email"
+                    name="username-email"
+                    type="text"
+                    required
+                    className="block w-full p-2 text-white border-0 rounded-md shadow-sm bg-zinc-950 ring-1 ring-inset ring-zinc-700 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                    onChange={(e) => setUsernameEmail(e.target.value)}
+                  />
+                </div>
+              </div>
+              {/* <!-- Password --> */}
+              <div>
+                {/* <!-- Label --> */}
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-normal leading-6 text-gray-300"
+                >Password
+                </label>
+                <div className="relative mt-2">
+                  {/* <!-- Input Field --> */}
+                  <input
+                    id="login-password"
+                    name="password"
+                    type="password"
+                    required
+                    className="block w-full p-2 pr-10 text-white border-0 rounded-md shadow-sm bg-zinc-950 ring-1 ring-inset ring-zinc-700 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  {/* <!-- Show/Hide Password Toggle --> */}
+                  <button
+                    className="absolute text-white transform -translate-y-1/2 toggle-password-button w-5 h-5 top-1/2 right-3"
+                  >
+                    {/* <!-- Show Password Icon --> */}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      className="text-gray-300 show-password-icon"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                      />
+                    </svg>
+                    {/* <!-- Hide Password Icon --> */}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      className="hidden text-gray-300 hide-password-icon"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              {/* <!-- Submit Login Form Button --> */}
+              <div>
+                <button
+                  id="login-submit-button"
+                  type="submit"
+                  className="flex justify-center w-full p-2 text-sm font-semibold leading-6 text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                  onClick={handleSubmit}
+                >
+                  Sign in
+                </button>
+              </div>
+            </form>
+            {/* <!-- SSO Login Divider --> */}
+            <div>
+              <div className="relative mt-10">
+                <div
+                  className="absolute inset-0 flex items-center"
+                  aria-hidden="true"
+                >
+                  <div className="w-full border-t border-zinc-700"></div>
+                </div>
+                <div
+                  className="relative flex justify-center text-sm font-medium leading-6"
+                >
+                  <span className="px-6 text-gray-300 bg-zinc-900"
+                  >Or continue with
+                  </span>
+                </div>
+              </div>
+              {/* <!-- SSO Options --> */}
+              <div className="grid grid-cols-2 gap-4 mt-6">
+                {/* <!-- Google SSO --> */}
+                <a
+                  href="#"
+                  className="flex items-center justify-center w-full gap-3 px-3 py-2 text-sm font-semibold text-white rounded-md shadow-sm bg-zinc-800 ring-1 ring-inset ring-zinc-700 hover:bg-zinc-700 focus-visible:ring-transparent"
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      d="M12.0003 4.75C13.7703 4.75 15.3553 5.36002 16.6053 6.54998L20.0303 3.125C17.9502 1.19 15.2353 0 12.0003 0C7.31028 0 3.25527 2.69 1.28027 6.60998L5.27028 9.70498C6.21525 6.86002 8.87028 4.75 12.0003 4.75Z"
+                      fill="#EA4335"
+                    />
+                    <path
+                      d="M23.49 12.275C23.49 11.49 23.415 10.73 23.3 10H12V14.51H18.47C18.18 15.99 17.34 17.25 16.08 18.1L19.945 21.1C22.2 19.01 23.49 15.92 23.49 12.275Z"
+                      fill="#4285F4"
+                    />
+                    <path
+                      d="M5.26498 14.2949C5.02498 13.5699 4.88501 12.7999 4.88501 11.9999C4.88501 11.1999 5.01998 10.4299 5.26498 9.7049L1.275 6.60986C0.46 8.22986 0 10.0599 0 11.9999C0 13.9399 0.46 15.7699 1.28 17.3899L5.26498 14.2949Z"
+                      fill="#FBBC05"
+                    />
+                    <path
+                      d="M12.0004 24.0001C15.2404 24.0001 17.9654 22.935 19.9454 21.095L16.0804 18.095C15.0054 18.82 13.6204 19.245 12.0004 19.245C8.8704 19.245 6.21537 17.135 5.2654 14.29L1.27539 17.385C3.25539 21.31 7.3104 24.0001 12.0004 24.0001Z"
+                      fill="#34A853"
+                    />
+                  </svg>
+                  <span className="text-sm font-semibold leading-6">Google</span>
+                </a>
+                {/* <!-- Microsoft SSO --> */}
+                <a
+                  href="#"
+                  className="flex items-center justify-center w-full gap-3 px-3 py-2 text-sm font-semibold text-white rounded-md shadow-sm bg-zinc-800 ring-1 ring-inset ring-zinc-700 hover:bg-zinc-700 focus-visible:ring-transparent"
+                >
+                  {/* <?xml version="1.0" encoding="utf-8"?> */}
+                  <svg
+                    className="w-5 h-5"
+                    viewBox="0 0 16 16"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                  >
+                    <path fill="#F35325" d="M1 1h6.5v6.5H1V1z" />
+                    <path fill="#81BC06" d="M8.5 1H15v6.5H8.5V1z" />
+                    <path fill="#05A6F0" d="M1 8.5h6.5V15H1V8.5z" />
+                    <path fill="#FFBA08" d="M8.5 8.5H15V15H8.5V8.5z" />
+                  </svg>
+                  <span className="text-sm font-semibold leading-6">Microsoft</span>
+                </a>
+              </div>
+            </div>
+          </div>
+          {/* <!-- Register User Prompt --> */}
+          <p className="mt-10 text-base text-center text-white">
+            Are you a new user?
+            {/* <!-- Register User Link --> */}
+            <span
+              href="register.html"
+              className="font-semibold leading-6 text-blue-500 hover:underline pl-1"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/sign-up")
+              }}
+            >Sign up
+            </span>
+          </p>
+        </div>
+      </div>
+      {/* <!-- End of Login Container --> */}
+      {/* <!-- *** --> */}
+      {/* <!-- Start of Login Container Scripts --> */}
+
+    </div>
+  );
+}
+
+export default SignIn;
